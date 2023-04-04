@@ -1,6 +1,20 @@
-const myCanvas = document.getElementById("myCanvas");
-const ctx = myCanvas.getContext("2d");
-console.log(ctx);
+let myCanvas = document.getElementById("myCanvas");
+let ctx = myCanvas.getContext("2d");
+
+/****************************************************************************/
+
+// VARIABLE DECLARATION
+let padd_Width = 80;
+let padd_height = 20;
+let padd_margin_bottom = 40;
+let leftArrow = false;
+let rightArrow = false;
+document.addEventListener("mousemove", mouseMoveHandler, false);
+let backG_img = new Image();
+// backG_img.src = "img/space.jpg";
+const ballRadius = 10;
+
+/****************************************************************************/
 
 //images
 const images = {
@@ -10,6 +24,14 @@ const images = {
   lives: new Image(),
   level: new Image(),
 };
+
+// IMAGES OF COMPONENTS
+images.background.src = "./img/background.jpeg";
+images.score.src = "./img/score.png";
+images.lives.src = "./img/life.png";
+images.level.src = "./img/level.png";
+
+/****************************************************************************/
 
 const game = {
   lives: 3,
@@ -37,7 +59,59 @@ let brick = {
   strokeColor: "#FFF",
 };
 
+/****************************************************************************/
 
+// PADDLE PEOPERTIES
+const padd = {
+  x: myCanvas.width / 2 - padd_Width / 2,
+  y: myCanvas.height - padd_height - padd_margin_bottom,
+  height: padd_height,
+  width: padd_Width,
+  dx: 5,
+};
+
+/****************************************************************************/
+
+// DRAWING THE PADDLE
+function drawingPaddle() {
+  ctx.fillStyle = "blue";
+  ctx.fillRect(padd.x, padd.y, padd.width, padd.height);
+  ctx.strokeStyle = "white";
+  ctx.strokeRect(padd.x, padd.y, padd.width, padd.height);
+}
+
+/****************************************************************************/
+
+// MOVING THE PADDLE USING KEYBOARD
+document.addEventListener("keydown", function (e) {
+  if (e.keyCode == 37) {
+    leftArrow = true;
+  } else if (e.keyCode == 39) {
+    rightArrow = true;
+  }
+});
+
+document.addEventListener("keyup", function (e) {
+  if (e.keyCode == 37) {
+    leftArrow = false;
+  } else if (e.keyCode == 39) {
+    rightArrow = false;
+  }
+});
+
+/****************************************************************************/
+
+// MOVING THE PADDLE USING MOUSE
+
+function mouseMoveHandler(e) {
+  const relativeX = e.clientX - myCanvas.offsetLeft;
+  if (
+    relativeX - padd_Width / 2 > 0 &&
+    relativeX + padd_Width / 2 < myCanvas.width
+  ) {
+    padd.x = relativeX - padd_Width / 2;
+  }
+}
 /****************************************************************************/
 
 //CREATE BRICKS ON CANVAS AT COORDINATES X & Y
@@ -57,11 +131,11 @@ function createBricks() {
   }
 }
 
-createBricks();
 /****************************************************************************/
 
 //DRAW BRICKS ON CANVAS
 function drawBricks() {
+  createBricks();
   for (let r = 0; r < brick.rows; r++) {
     for (let c = 0; c < brick.cols; c++) {
       let b = brickContainer[r][c];
@@ -81,45 +155,82 @@ function drawBricks() {
 
 /****************************************************************************/
 
-// IMAGES OF COMPONENTS
-images.background.src = "./img/background.jpeg";
-images.score.src = "./img/score.png";
-images.lives.src = "./img/life.png";
-images.level.src = "./img/level.png";
-
-/****************************************************************************/
-
-// PAINT SHAPES ON CANVAS
-function paint() {
-  //CLEAR PREVIOUS FRAME
-  ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-  // DRAW BACKGROUND
-  ctx.drawImage(images.background, 0, 0, myCanvas.width, myCanvas.height);
-  // DRAW SCORE
-  showGameStats(game.score, 35, 30, images.score, 5, 9);
-  // DRAW LEVELS
-  showGameStats(
-    game.level,
-    myCanvas.width / 2,
-    30,
-    images.level,
-    myCanvas.width / 2 - 30,
-    8
-  );
-  drawBricks();
-  drawLives();
+// MOVING THE PADDLE RIGHT & LEFT
+function movingPaddle() {
+  if (rightArrow && padd.x + padd.width < myCanvas.width) {
+    padd.x += padd.dx;
+  } else if (leftArrow && padd.x > 0) {
+    padd.x -= padd.dx;
+  }
 }
 
 /****************************************************************************/
 
-// ANIMATION FOR GAME
-function animation() {
-  paint();
-  requestAnimationFrame(animation);
-}
-animation();
+// BALL PROPERTIES
+const ball = {
+  x: myCanvas.width / 2,
+  y: padd.y - ballRadius,
+  r: 10, //BALL RADIUS
+  speed: 3,
+  dx: 3,
+  dy: -3,
+};
 
 /****************************************************************************/
+
+// DRAW THE BALL
+function drawBall() {
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+  ctx.fillStyle = "RED";
+  ctx.fill();
+  ctx.strokeStyle = "black";
+  ctx.stroke();
+  ctx.closePath();
+}
+
+/****************************************************************************/
+
+// MOVE THE BALL
+let LIFE = 3;
+function moveBall() {
+  ball.x += ball.dx;
+  ball.y += ball.dy;
+}
+
+moveBall();
+
+/****************************************************************************/
+
+// BALL AND WALL COLLISION DETECTION
+function ballWallCollision() {
+  if (ball.x + ballRadius > myCanvas.width || ball.x - ballRadius < 0) {
+    ball.dx = -ball.dx;
+    //WALL_HIT.play();
+  }
+
+  if (ball.y - ballRadius < 0) {
+    ball.dy = -ball.dy;
+    //WALL_HIT.play();
+  }
+
+  if (ball.y + ballRadius > myCanvas.height) {
+    LIFE--; // LOSE LIFE
+    //LIFE_LOST.play();
+    resetBall();
+  }
+}
+ballWallCollision();
+
+/****************************************************************************/
+
+// RESET THE BALL
+function resetBall() {
+  ball.x = myCanvas.width / 2;
+  ball.y = padd.y - ballRadius;
+  ball.dx = 3 * (Math.random() * 2 - 1);
+  ball.dy = -3;
+}
 
 // show game stats
 function showGameStats(text, textX, textY, img, imgX, imgY) {
@@ -145,4 +256,46 @@ function drawLives() {
   }
 }
 
-/******************************************************** */
+/****************************************************************************/
+
+// PAINT SHAPES ON CANVAS
+function paint() {
+  //CLEAR PREVIOUS FRAME
+  ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+  // DRAW BACKGROUND
+  ctx.drawImage(images.background, 0, 0, myCanvas.width, myCanvas.height);
+  // DRAW SCORE
+  showGameStats(game.score, 35, 30, images.score, 5, 9);
+  // DRAW LEVELS
+  showGameStats(
+    game.level,
+    myCanvas.width / 2,
+    30,
+    images.level,
+    myCanvas.width / 2 - 30,
+    8
+  );
+  drawBricks();
+  drawLives();
+  drawingPaddle();
+  drawBall();
+}
+
+/****************************************************************************/
+
+// THE UPDATE FUNCTIONS
+function update() {
+  moveBall();
+  ballWallCollision();
+  movingPaddle();
+}
+
+/****************************************************************************/
+
+// THE GAME LOOP FUNCTIONS
+function animation() {
+  paint();
+  update();
+  requestAnimationFrame(animation);
+}
+animation();
