@@ -5,13 +5,16 @@
 }
 
 body{
-    background-color: #09c;
+    background-color:rgb(3 21 39);
 }
 
 #myCanvas {
     background-color: #eee;
+    margin-top: 50px;
 }
+
 .convasContainer{
     margin: auto;
     width: 650px;
 }
+
