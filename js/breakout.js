@@ -76,7 +76,7 @@ const padd = {
 function drawingPaddle() {
   ctx.fillStyle = "blue";
   ctx.fillRect(padd.x, padd.y, padd.width, padd.height);
-  ctx.strokeStyle = "black";
+  ctx.strokeStyle = "white";
   ctx.strokeRect(padd.x, padd.y, padd.width, padd.height);
 }
 
@@ -166,6 +166,72 @@ function movingPaddle() {
 
 /****************************************************************************/
 
+// BALL PROPERTIES
+const ball = {
+  x: myCanvas.width / 2,
+  y: padd.y - ballRadius,
+  r: 10, //BALL RADIUS
+  speed: 3,
+  dx: 3,
+  dy: -3,
+};
+
+/****************************************************************************/
+
+// DRAW THE BALL
+function drawBall() {
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+  ctx.fillStyle = "RED";
+  ctx.fill();
+  ctx.strokeStyle = "black";
+  ctx.stroke();
+  ctx.closePath();
+}
+
+/****************************************************************************/
+
+// MOVE THE BALL
+let LIFE = 3;
+function moveBall() {
+  ball.x += ball.dx;
+  ball.y += ball.dy;
+}
+
+moveBall();
+
+/****************************************************************************/
+
+// BALL AND WALL COLLISION DETECTION
+function ballWallCollision() {
+  if (ball.x + ballRadius > myCanvas.width || ball.x - ballRadius < 0) {
+    ball.dx = -ball.dx;
+    //WALL_HIT.play();
+  }
+
+  if (ball.y - ballRadius < 0) {
+    ball.dy = -ball.dy;
+    //WALL_HIT.play();
+  }
+
+  if (ball.y + ballRadius > myCanvas.height) {
+    LIFE--; // LOSE LIFE
+    //LIFE_LOST.play();
+    resetBall();
+  }
+}
+ballWallCollision();
+
+/****************************************************************************/
+
+// RESET THE BALL
+function resetBall() {
+  ball.x = myCanvas.width / 2;
+  ball.y = padd.y - ballRadius;
+  ball.dx = 3 * (Math.random() * 2 - 1);
+  ball.dy = -3;
+}
+
 // show game stats
 function showGameStats(text, textX, textY, img, imgX, imgY) {
   // draw text
@@ -212,12 +278,15 @@ function paint() {
   drawBricks();
   drawLives();
   drawingPaddle();
+  drawBall();
 }
 
 /****************************************************************************/
 
 // THE UPDATE FUNCTIONS
 function update() {
+  moveBall();
+  ballWallCollision();
   movingPaddle();
 }
 
