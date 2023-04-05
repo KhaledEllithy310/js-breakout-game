@@ -172,7 +172,7 @@ const ball = {
   y: padd.y - ballRadius,
   r: 10, //BALL RADIUS
   speed: 3,
-  dx: 3,
+  dx: 3 * (Math.random() * 2 - 1),
   dy: -3,
 };
 
@@ -221,6 +221,28 @@ function ballWallCollision() {
   }
 }
 ballWallCollision();
+
+/****************************************************************************/
+
+// BALL AND PADDLE COLLISION DETECTION
+function ballPaddleCollision() {
+  if (
+    ball.y > padd.y &&
+    ball.y < padd.y + padd.height &&
+    ball.x > padd.x &&
+    ball.x < padd.x + padd.width
+  ) {
+    //WHRER THE BALL HIT THE PADDLE
+    let collidePoint = ball.x - (padd.x + padd.width / 2);
+    //NORMALIZE THE VALUEW
+    collidePoint = collidePoint / (padd.x + padd.width);
+    //CALCULATE THE ANGLE OF THE BALL THE Y DIRECTION
+    let angle = collidePoint * (Math.PI * 3);
+    //CALCULATE THE NEW DIRECTION OF THE BALL
+    ball.dx = ball.speed * Math.sin(angle);
+    ball.dy = -ball.speed * Math.cos(angle);
+  }
+}
 
 /****************************************************************************/
 
@@ -286,8 +308,9 @@ function paint() {
 // THE UPDATE FUNCTIONS
 function update() {
   moveBall();
-  ballWallCollision();
   movingPaddle();
+  ballWallCollision();
+  ballPaddleCollision();
 }
 
 /****************************************************************************/
