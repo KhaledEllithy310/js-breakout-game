@@ -15,6 +15,48 @@ document.addEventListener("mousemove", mouseMoveHandler, false);
 let backG_img = new Image();
 // backG_img.src = "img/space.jpg";
 const ballRadius = 10;
+let avail_lives = 3;
+let GAME_OVER = false;
+
+/****************************************************************************/
+
+/****************************************************************************/
+// THE gameStatus FUNCTIONS
+let gameStatus = document.getElementById('gameStatus');
+let wonGame = document.getElementById('wonGame');
+let loseGame = document.getElementById('loseGame');
+let playAgain = document.getElementById('playAgain');
+let img = document.getElementById('sad-img');
+let cup = document.getElementById('cup-img');
+
+playAgain.addEventListener("click",function() {
+  location.reload();
+})
+
+function youWon() {
+  gameStatus.style.display = 'block';  // still will be added in level done func
+  cup.style.display = 'block';
+  wonGame.style.display = 'block';
+  playAgain.style.display = 'block';
+}
+
+function youLost() {
+  gameStatus.style.display = 'block';
+  loseGame.style.display = 'block';
+  img.style.display = 'block';
+  playAgain.style.display = 'block';
+}
+
+/****************************************************************************/
+//WIN BTN
+function win() {
+  youWon();
+}
+// LOSE BTN
+function lost() {
+  youLost();
+}
+/****************************************************************************/
 
 /****************************************************************************/
 
@@ -94,9 +136,21 @@ drawingPaddle();
 
 /****************************************************************************/
 
+/****************************************************************************/
+// GAME OVER FUNCTION
+
+function gameOver() {
+  if (avail_lives <= 0) {
+    loseGame();
+    GAME_OVER = true;
+  }
+}
+/****************************************************************************/
+
 // THE UPDATE FUNCTIONS
 function update() {
 movingPaddle();
+gameOver()
 }
 
 /****************************************************************************/
@@ -105,6 +159,10 @@ movingPaddle();
 function animation() {
   paint();
   update();
-  requestAnimationFrame(animation);
+
+  if (! GAME_OVER) {
+    requestAnimationFrame(animation);
+  }
+  
 }
 animation();
