@@ -1,7 +1,5 @@
 let myCanvas = document.getElementById("myCanvas");
 let ctx = myCanvas.getContext("2d");
-ctx.lineWidth = 4;
-
 
 /****************************************************************************/
 
@@ -60,13 +58,58 @@ function lost() {
 
 /****************************************************************************/
 
+//images
+const images = {
+  background: new Image(),
+  ball: new Image(),
+  score: new Image(),
+  lives: new Image(),
+  level: new Image(),
+};
+
+// IMAGES OF COMPONENTS
+images.background.src = "./img/background.jpeg";
+images.score.src = "./img/score.png";
+images.lives.src = "./img/life.png";
+images.level.src = "./img/level.png";
+
+/****************************************************************************/
+
+const game = {
+  lives: 3,
+  score: 0,
+  level: 1,
+};
+
+// CONTAINER TO STORE THE BRICKIS INSIDE IT
+let brickContainer = [];
+
+/****************************************************************************/
+
+// BRICK PROPERTIES
+let brick = {
+  rows: 5,
+  cols: 10,
+  height: 30,
+  width: function () {
+    return myCanvas.width / this.cols;
+  },
+  offsetLeft: 0,
+  offsetTop: 0,
+  marginTop: 100,
+  fillColor: "rgba(9, 10, 78)",
+  strokeColor: "#FFF",
+};
+
+/****************************************************************************/
+
 // PADDLE PEOPERTIES
 const padd = {
-x: myCanvas.width / 2 - padd_Width / 2,
-y: myCanvas.height - padd_height - padd_margin_bottom,
-height: padd_height,
-width: padd_Width,
-dx: 5,
+  x: myCanvas.width / 2 - padd_Width / 2,
+  y: myCanvas.height - padd_height - padd_margin_bottom,
+  height: padd_height,
+  width: padd_Width,
+  dx: 5,
 };
 
 /****************************************************************************/
@@ -75,7 +118,7 @@ dx: 5,
 function drawingPaddle() {
   ctx.fillStyle = "blue";
   ctx.fillRect(padd.x, padd.y, padd.width, padd.height);
-  ctx.strokeStyle = "black";
+  ctx.strokeStyle = "white";
   ctx.strokeRect(padd.x, padd.y, padd.width, padd.height);
 }
 
@@ -111,27 +154,173 @@ function mouseMoveHandler(e) {
     padd.x = relativeX - padd_Width / 2;
   }
 }
+/****************************************************************************/
+
+//CREATE BRICKS ON CANVAS AT COORDINATES X & Y
+function createBricks() {
+  for (let r = 0; r < brick.rows; r++) {
+    brickContainer[r] = [];
+    for (let c = 0; c < brick.cols; c++) {
+      brickContainer[r][c] = {
+        x: c * (brick.width() + brick.offsetLeft) + brick.offsetLeft,
+        y:
+          r * (brick.height + brick.offsetTop) +
+          brick.offsetTop +
+          brick.marginTop,
+        status: true,
+      };
+    }
+  }
+}
+
+/****************************************************************************/
+
+//DRAW BRICKS ON CANVAS
+function drawBricks() {
+  createBricks();
+  for (let r = 0; r < brick.rows; r++) {
+    for (let c = 0; c < brick.cols; c++) {
+      let b = brickContainer[r][c];
+      // if the brick does not broken
+      if (b.status) {
+        ctx.beginPath();
+        ctx.fillStyle = brick.fillColor;
+        ctx.fillRect(b.x, b.y, brick.width(), brick.height);
+
+        ctx.strokeStyle = brick.strokeColor;
+        ctx.strokeRect(b.x, b.y, brick.width(), brick.height);
+        ctx.closePath();
+      }
+    }
+  }
+}
 
 /****************************************************************************/
 
 // MOVING THE PADDLE RIGHT & LEFT
 function movingPaddle() {
-if (rightArrow && padd.x + padd.width < myCanvas.width) {
+  if (rightArrow && padd.x + padd.width < myCanvas.width) {
     padd.x += padd.dx;
-} else if (leftArrow && padd.x > 0) {
+  } else if (leftArrow && padd.x > 0) {
     padd.x -= padd.dx;
-}
+  }
 }
 
 /****************************************************************************/
 
-// THE PAINTING FUNCTION
+// BALL PROPERTIES
+const ball = {
+  x: myCanvas.width / 2,
+  y: padd.y - ballRadius,
+  r: 10, //BALL RADIUS
+  speed: 3,
+  dx: 3,
+  dy: -3,
+};
+
+/****************************************************************************/
+
+// DRAW THE BALL
+function drawBall() {
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+  ctx.fillStyle = "RED";
+  ctx.fill();
+  ctx.strokeStyle = "black";
+  ctx.stroke();
+  ctx.closePath();
+}
+
+/****************************************************************************/
+
+// MOVE THE BALL
+let LIFE = 3;
+function moveBall() {
+  ball.x += ball.dx;
+  ball.y += ball.dy;
+}
+
+moveBall();
+
+/****************************************************************************/
+
+// BALL AND WALL COLLISION DETECTION
+function ballWallCollision() {
+  if (ball.x + ballRadius > myCanvas.width || ball.x - ballRadius < 0) {
+    ball.dx = -ball.dx;
+    //WALL_HIT.play();
+  }
+
+  if (ball.y - ballRadius < 0) {
+    ball.dy = -ball.dy;
+    //WALL_HIT.play();
+  }
+
+  if (ball.y + ballRadius > myCanvas.height) {
+    LIFE--; // LOSE LIFE
+    //LIFE_LOST.play();
+    resetBall();
+  }
+}
+ballWallCollision();
+
+/****************************************************************************/
+
+// RESET THE BALL
+function resetBall() {
+  ball.x = myCanvas.width / 2;
+  ball.y = padd.y - ballRadius;
+  ball.dx = 3 * (Math.random() * 2 - 1);
+  ball.dy = -3;
+}
+
+// show game stats
+function showGameStats(text, textX, textY, img, imgX, imgY) {
+  // draw text
+  ctx.fillStyle = "#FFF";
+  ctx.font = "25px Germania One";
+  ctx.fillText(text, textX, textY);
+  ctx.drawImage(img, imgX, imgY, 25, 25);
+}
+
+/****************************************************************************/
+
+//DRAW LIVES OF GAMER
+function drawLives() {
+  if (game.lives > 2) {
+    ctx.drawImage(images.lives, myCanvas.width - 130, 12, 25, 25);
+  }
+  if (game.lives > 1) {
+    ctx.drawImage(images.lives, myCanvas.width - 90, 12, 25, 25);
+  }
+  if (game.lives > 0) {
+    ctx.drawImage(images.lives, myCanvas.width - 50, 12, 25, 25);
+  }
+}
+
+/****************************************************************************/
+
+// PAINT SHAPES ON CANVAS
 function paint() {
   //CLEAR PREVIOUS FRAME
-  //   ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-ctx.drawImage(backG_img, 0, 0, myCanvas.width, myCanvas.height);
-  // ctx.drawImage(images.ball, ball.x, ball.y, 2 * ballRadius, 2 * ballRadius);
-drawingPaddle();
+  ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+  // DRAW BACKGROUND
+  ctx.drawImage(images.background, 0, 0, myCanvas.width, myCanvas.height);
+  // DRAW SCORE
+  showGameStats(game.score, 35, 30, images.score, 5, 9);
+  // DRAW LEVELS
+  showGameStats(
+    game.level,
+    myCanvas.width / 2,
+    30,
+    images.level,
+    myCanvas.width / 2 - 30,
+    8
+  );
+  drawBricks();
+  drawLives();
+  drawingPaddle();
+  drawBall();
 }
 
 /****************************************************************************/
@@ -149,8 +338,10 @@ function gameOver() {
 
 // THE UPDATE FUNCTIONS
 function update() {
-movingPaddle();
 gameOver()
+  moveBall();
+  ballWallCollision();
+  movingPaddle();
 }
 
 /****************************************************************************/

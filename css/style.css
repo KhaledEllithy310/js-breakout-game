@@ -5,7 +5,7 @@
 }
 
 body{
-    background-color: #09c;
+    background-color:rgb(3 21 39);
 }
 
 #myCanvas {
@@ -13,7 +13,9 @@ body{
     margin: auto;
     background-color: #eee;
     border: 2px solid black;
+    margin-top: 50px;
 }
+
 .convasContainer{
     margin: auto;
     width: 650px;
