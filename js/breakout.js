@@ -18,29 +18,29 @@ let GAME_OVER = false;
 
 /****************************************************************************/
 // THE gameStatus FUNCTIONS
-let gameStatus = document.getElementById('gameStatus');
-let wonGame = document.getElementById('wonGame');
-let loseGame = document.getElementById('loseGame');
-let playAgain = document.getElementById('playAgain');
-let img = document.getElementById('sad-img');
-let cup = document.getElementById('cup-img');
+let gameStatus = document.getElementById("gameStatus");
+let wonGame = document.getElementById("wonGame");
+let loseGame = document.getElementById("loseGame");
+let playAgain = document.getElementById("playAgain");
+let img = document.getElementById("sad-img");
+let cup = document.getElementById("cup-img");
 
-playAgain.addEventListener("click",function() {
+playAgain.addEventListener("click", function () {
   location.reload();
-})
+});
 
 function youWon() {
-  gameStatus.style.display = 'block';  // still will be added in level done func
-  cup.style.display = 'block';
-  wonGame.style.display = 'block';
-  playAgain.style.display = 'block';
+  gameStatus.style.display = "block"; // still will be added in level done func
+  cup.style.display = "block";
+  wonGame.style.display = "block";
+  playAgain.style.display = "block";
 }
 
 function youLost() {
-  gameStatus.style.display = 'block';
-  loseGame.style.display = 'block';
-  img.style.display = 'block';
-  playAgain.style.display = 'block';
+  gameStatus.style.display = "block";
+  loseGame.style.display = "block";
+  img.style.display = "block";
+  playAgain.style.display = "block";
 }
 
 /****************************************************************************/
@@ -66,7 +66,7 @@ const images = {
 };
 
 // IMAGES OF COMPONENTS
-images.background.src = "./img/background.jpeg";
+images.background.src = "./img/1876.jpg";
 images.score.src = "./img/score.png";
 images.lives.src = "./img/life.png";
 images.level.src = "./img/level.png";
@@ -375,12 +375,20 @@ function drawLives() {
 
 /****************************************************************************/
 
+// HOME PAGE
+let small = document.getElementById("small");
+document.getElementById("first").addEventListener("click", function clicking() {
+  small.style = "display:none";
+});
+
+/****************************************************************************/
+
 // PAINT SHAPES ON CANVAS
 function paint() {
   //CLEAR PREVIOUS FRAME
   ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
   // DRAW BACKGROUND
-  ctx.drawImage(images.background, 0, 0, myCanvas.width, myCanvas.height);
+  // ctx.drawImage(images.background, 0, 0, myCanvas.width, myCanvas.height);
   // DRAW SCORE
   showGameStats(game.score, 35, 30, images.score, 5, 9);
   // DRAW LEVELS
@@ -413,7 +421,7 @@ function gameOver() {
 
 // THE UPDATE FUNCTIONS
 function update() {
-gameOver()
+  gameOver();
   moveBall();
   movingPaddle();
   ballWallCollision();
@@ -428,9 +436,8 @@ function animation() {
   paint();
   update();
 
-  if (! GAME_OVER) {
+  if (!GAME_OVER) {
     requestAnimationFrame(animation);
   }
-  
 }
 animation();
