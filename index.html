@@ -8,9 +8,28 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
+
+
+    <div id="gameStatus">
+      <!-- <img src="win.png" id="wonGame">
+      <img src="lose.png" id="loseGame"> -->
+      <!-- <div class="overlay-content"> -->
+      <h2 id="wonGame">You Have Won</h2>
+      <img src="cup.png" id="cup-img">
+      <h2 id="loseGame">GAME OVER</h2>
+      <img src="sad.png" id="sad-img">
+      <div id="playAgain">Play Again..!</div>
+      <!-- </div> -->
+    </div>
+      <input type="submit" value="won" id="btn" class="btn" onclick="win()">
+      <input type="submit" value="lost" id="btn2" class="btn2" onclick="lost()">
+
+      
+
    
       <canvas id="myCanvas" width="600" height="650">123</canvas>
  
+
     <script src="js/breakout.js"></script>
   </body>
 </html>

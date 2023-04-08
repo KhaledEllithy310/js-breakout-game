@@ -1,4 +1,4 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -9,9 +9,94 @@ body{
 }
 
 #myCanvas {
-    background-color: #eee;
-    margin: auto;
     display: block;
-
+    margin: auto;
+    background-color: #eee;
 }
 
+/* #gameStatus {
+    position: absolute;
+    margin-left: 349px;
+    margin-top: 19px;
+    width: 600px;
+    height: 650px;
+    background: rgba(0,0,0,0.7);
+    display: none;
+} */
+
+#gameStatus {
+    position: absolute;
+    width: 100%;
+    height: 800px;
+    margin: auto;
+    background: rgba(0,0,0,0.7);
+    display: none;
+}
+
+#wonGame {
+    position: absolute;
+    margin-top: 21%;
+    margin-left: 33%;
+    text-align: center;
+    display: none;
+    font-size: 80px;
+    font-weight: bold;
+    font-family: fantasy;
+    color: white;
+    text-shadow: 1px 1px 2px rgb(236, 240, 2), 0 0 25px blueviolet, 0 0 5px blue;
+} 
+
+#cup-img {
+    margin: auto;
+    margin-top: 5%;
+    width: 200px;
+    height: 200px;
+    display: none;
+}
+
+#loseGame {
+    position: absolute;
+    margin-top: 21%;
+    margin-left: 35%;
+    text-align: center;
+    display: none;
+    font-size: 85px;
+    font-weight: bold;
+    font-family: fantasy;
+    color: red;
+    text-shadow: 1px 1px 2px rgb(236, 240, 2), 0 0 25px rgb(255, 255, 0), 0 0 5px yellow;
+}
+
+#sad-img {
+    margin: auto;
+    margin-top: 5%;
+    width: 200px;
+    height: 200px;
+    display: none;
+    transition-duration: 1s;
+    transition-property: transform;
+    transition-timing-function: ease;
+}
+
+#sad-img:hover {
+    transform: rotate(360deg); 
+}
+
+#playAgain {
+    position: absolute;
+    border: 1px solid yellow;
+    border-radius: 5px;
+    padding: 5px;
+    top: 67%;
+    left: 40%;
+    font-family: fantasy;
+    cursor: pointer;
+    font-size: 55px;
+    color: red;
+    display: none;
+}
+
+#playAgain:hover {
+    background-color: yellow;
+    border: 3px solid red;
+}
