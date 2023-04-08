@@ -4,7 +4,7 @@ let ctx = myCanvas.getContext("2d");
 /****************************************************************************/
 
 // VARIABLE DECLARATION
-let padd_Width = 120;
+let padd_Width = 150;
 let padd_height = 20;
 let padd_margin_bottom = 40;
 let leftArrow = false;
@@ -86,7 +86,7 @@ let brickContainer = [];
 
 // BRICK PROPERTIES
 let brick = {
-  rows: 3,
+  rows: 1,
   cols: 5,
   height: 30,
   width: function () {
