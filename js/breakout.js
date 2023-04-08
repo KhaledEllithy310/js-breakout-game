@@ -13,6 +13,8 @@ document.addEventListener("mousemove", mouseMoveHandler, false);
 const ballRadius = 10;
 let avail_lives = 3;
 let GAME_OVER = false;
+//let LEVEL =1;
+//let MAX_LEVEL=3;
 
 /****************************************************************************/
 
@@ -77,6 +79,7 @@ const game = {
   lives: 3,
   score: 0,
   level: 1,
+  MAX_LEVEL:3,
 };
 
 // CONTAINER TO STORE THE BRICKIS INSIDE IT
@@ -140,7 +143,7 @@ document.addEventListener("keyup", function (e) {
   }
 });
 
-/****************************************************************************/
+/***************************************************************************/
 
 // MOVING THE PADDLE USING MOUSE
 
@@ -230,7 +233,7 @@ const ball = {
   x: myCanvas.width / 2,
   y: padd.y - ballRadius,
   r: 10, //BALL RADIUS
-  speed: 3,
+  speed: 7,
   dx: 3 * (Math.random() * 2 - 1),
   dy: -3,
 };
@@ -264,16 +267,17 @@ moveBall();
 function ballWallCollision() {
   if (ball.x + ballRadius > myCanvas.width || ball.x - ballRadius < 0) {
     ball.dx = -ball.dx;
-    //WALL_HIT.play();
+    WALL_HIT.play(); //sound
   }
 
   if (ball.y - ballRadius < 0) {
     ball.dy = -ball.dy;
-    //WALL_HIT.play();
+    WALL_HIT.play(); //sound
   }
 
   if (ball.y + ballRadius > myCanvas.height) {
     game.lives--;
+    LIFE_LOST.play(); //sound
     resetBall();
   }
 }
@@ -289,12 +293,15 @@ function ballPaddleCollision() {
     ball.x > padd.x &&
     ball.x < padd.x + padd.width
   ) {
+
+   PADDLE_HIT.play(); //sound
+
     //WHRER THE BALL HIT THE PADDLE
     let collidePoint = ball.x - (padd.x + padd.width / 2);
     //NORMALIZE THE VALUE
-    collidePoint = collidePoint / (padd.x + padd.width);
+    collidePoint = collidePoint / (padd.width / 2);
     //CALCULATE THE ANGLE OF THE BALL THE Y DIRECTION
-    let angle = collidePoint * (Math.PI * 3);
+    let angle = (collidePoint * Math.PI) / 3;
     //CALCULATE THE NEW DIRECTION OF THE BALL
     ball.dx = ball.speed * Math.sin(angle);
     ball.dy = -ball.speed * Math.cos(angle);
@@ -316,6 +323,7 @@ function ballBricksCollision() {
           ball.y - ball.r < b.y + brick.height &&
           ball.y + ball.r > b.y
         ) {
+             BRICK_HIT.play();//sound
           b.hitsNum--;
           ctx.fillRect(b.x, b.y, brick.width(), brick.height);
           ctx.fillStyle = "red";
@@ -339,6 +347,32 @@ function ballBricksCollision() {
   }
 }
 
+/****************************************************************************/
+
+// //level up 
+function levelUp(){
+  let isLevelDone =true
+ for (let r = 0; r < brick.rows; r++) {
+   for (let c = 0; c < brick.cols; c++) {
+         isLevelDone =isLevelDone && ! brickContainer[r][c].status
+                  }
+          }
+          if(isLevelDone){
+              WIN.play();//sound
+              if(game.level >= game.MAX_LEVEL){
+                  youWon();
+                 
+                  GAME_OVER=true;
+                  return;
+              }
+              brick.rows++;
+              createBricks();
+              ball.speed+=0.5;
+              resetBall();
+              game.level++;
+              COMPLETE_LEVEL.play();//sound
+          }
+      }
 /****************************************************************************/
 
 // RESET THE BALL
@@ -412,9 +446,10 @@ function paint() {
 // GAME OVER FUNCTION
 
 function gameOver() {
-  if (avail_lives <= 0) {
-    loseGame();
+  if (game.lives <= 0) {
+    youLost();
     GAME_OVER = true;
+    GAME_OVER_sound.play();//sound
   }
 }
 /****************************************************************************/
@@ -427,6 +462,7 @@ function update() {
   ballWallCollision();
   ballPaddleCollision();
   ballBricksCollision();
+  levelUp();
 }
 
 /****************************************************************************/
@@ -441,3 +477,31 @@ function animation() {
   }
 }
 animation();
+
+
+
+//select sound
+const soundElement = document.getElementById("sound");
+
+soundElement.addEventListener("click", audioManager);
+
+function audioManager(){
+    // CHANGE IMAGE SOUND_ON/OFF
+    let imgSrc = soundElement.getAttribute("src");
+    let SOUND_IMG = imgSrc == "img/SOUND_ON.png" ? "img/SOUND_OFF.png" : "img/SOUND_ON.png";
+    
+    soundElement.setAttribute("src", SOUND_IMG);
+    
+    // MUTE AND UNMUTE SOUNDS
+    WALL_HIT.muted = WALL_HIT.muted ? false : true;
+    PADDLE_HIT.muted = PADDLE_HIT.muted ? false : true;
+    BRICK_HIT.muted = BRICK_HIT.muted ? false : true;
+    WIN.muted = WIN.muted ? false : true;
+    LIFE_LOST.muted = LIFE_LOST.muted ? false : true;
+    GAME_OVER_sound.muted = GAME_OVER_sound.muted ? false : true;
+    COMPLETE_LEVEL.muted =  COMPLETE_LEVEL.muted ? false : true;
+
+   
+
+    
+}
