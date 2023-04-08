@@ -26,7 +26,7 @@ const images = {
 };
 
 // IMAGES OF COMPONENTS
-images.background.src = "./img/background.jpeg";
+images.background.src = "./img/1876.jpg";
 images.score.src = "./img/score.png";
 images.lives.src = "./img/life.png";
 images.level.src = "./img/level.png";
@@ -258,12 +258,21 @@ function drawLives() {
 
 /****************************************************************************/
 
+// HOME PAGE
+
+let small = document.getElementById("small");
+document.getElementById("first").addEventListener("click", function clicking() {
+  small.style = "display:none";
+});
+
+/****************************************************************************/
+
 // PAINT SHAPES ON CANVAS
 function paint() {
   //CLEAR PREVIOUS FRAME
   ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
   // DRAW BACKGROUND
-  ctx.drawImage(images.background, 0, 0, myCanvas.width, myCanvas.height);
+  // ctx.drawImage(images.background, 0, 0, myCanvas.width, myCanvas.height);
   // DRAW SCORE
   showGameStats(game.score, 35, 30, images.score, 5, 9);
   // DRAW LEVELS

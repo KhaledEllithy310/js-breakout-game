@@ -1,20 +1,64 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body{
-    background-color:rgb(3 21 39);
+body {
+  padding: 0;
+  margin: 0;
+  background-color: rgb(3 21 39);
+  background-image: url("../img/body.jpg");
+  background-position: center;
+  background-size: 100% 100%;
+  height: 100vh;
 }
 
-#myCanvas {
-    background-color: #eee;
-    margin-top: 50px;
+body::after {
+  content: "";
+  background-color: rgba(0, 0, 0, 0.349);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
-.convasContainer{
-    margin: auto;
-    width: 650px;
+canvas {
+  display: block;
+  margin: auto;
+  position: relative;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.077);
+  border: 1px solid rgba(0, 0, 0, 0.347);
+  z-index: 1;
+}
+
+#small {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  background-image: url("../img/bg2.jpg");
+  background-position: center;
+  background-size: 100% 100%;
+  height: 100vh;
+  background-repeat: no-repeat;
+  z-index: 2;
+}
+
+#small #first {
+    display: block;
+    padding: 30px 20px;
+    color: white;
+    background-color: rgb(129 64 218);
+    border-radius: 15px;
+    border-color: transparent;
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 63%;
+    margin-top: -20%;
+    cursor: pointer;
+    border: 2px solid white;
 }
 
