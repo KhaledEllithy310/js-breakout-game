@@ -2,101 +2,162 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-body{
-    background-color:rgb(3 21 39);
-}
-
-#myCanvas {
+  }
+   
+  body {
+    padding: 0;
+    margin: 0;
+    background-color: rgb(3 21 39);
+    background-image: url("../img/body.jpg");
+    background-position: center;
+    background-size: 100% 100%;
+    height: 100vh;
+  }
+  
+  body::after {
+    content: "";
+    background-color: rgba(0, 0, 0, 0.349);
+    position: absolute;
+    inset: 0;
+    z-index: -1
+    ;
+  }
+  
+  #myCanvas {
+    
     display: block;
     margin: auto;
-    background-color: #eee;
-}
-
-/* #gameStatus {
+    position: relative;
+    /* height: 100vh; */
+    background-color: rgba(0, 0, 0, 0.077);
+    border: 1px solid rgba(0, 0, 0, 0.347);
+    z-index: 1;
+  }
+  
+  #small {
     position: absolute;
-    margin-left: 349px;
-    margin-top: 19px;
-    width: 600px;
-    height: 650px;
-    background: rgba(0,0,0,0.7);
-    display: none;
-} */
-
-#gameStatus {
-    position: absolute;
-    width: 100%;
-    height: 800px;
-    margin: auto;
-    background: rgba(0,0,0,0.7);
-    display: none;
-}
-
-#wonGame {
-    position: absolute;
-    margin-top: 21%;
-    margin-left: 33%;
-    text-align: center;
-    display: none;
-    font-size: 80px;
-    font-weight: bold;
-    font-family: fantasy;
-    color: white;
-    text-shadow: 1px 1px 2px rgb(236, 240, 2), 0 0 25px blueviolet, 0 0 5px blue;
-} 
-
-#cup-img {
-    margin: auto;
-    margin-top: 5%;
-    width: 200px;
-    height: 200px;
-    display: none;
-}
-
-#loseGame {
-    position: absolute;
-    margin-top: 21%;
-    margin-left: 35%;
-    text-align: center;
-    display: none;
-    font-size: 85px;
-    font-weight: bold;
-    font-family: fantasy;
-    color: red;
-    text-shadow: 1px 1px 2px rgb(236, 240, 2), 0 0 25px rgb(255, 255, 0), 0 0 5px yellow;
-}
-
-#sad-img {
-    margin: auto;
-    margin-top: 5%;
-    width: 200px;
-    height: 200px;
-    display: none;
-    transition-duration: 1s;
-    transition-property: transform;
-    transition-timing-function: ease;
-}
-
-#sad-img:hover {
-    transform: rotate(360deg); 
-}
-
-#playAgain {
-    position: absolute;
-    border: 1px solid yellow;
-    border-radius: 5px;
-    padding: 5px;
-    top: 67%;
-    left: 40%;
-    font-family: fantasy;
+    top: 0;
+    bottom: 0;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    background-image: url("../img/bg2.jpg");
+    background-position: center;
+    background-size: 100% 100%;
+    height: 100vh;
+    background-repeat: no-repeat;
+    z-index: 2;
+  }
+  
+  #small #first {
+      display: block;
+      padding: 30px 20px;
+      color: white;
+      background-color: rgb(129 64 218);
+      border-radius: 15px;
+      border-color: transparent;
+      font-weight: bold;
+      font-size: 15px;
+      margin-left: 63%;
+      margin-top: -20%;
+      cursor: pointer;
+      border: 2px solid white;
+  }
+  #gameStatus{
+      position: absolute;
+      top: 0; 
+      z-index: 2;
+      width: 100%;
+      height: 800px;
+      margin: auto;
+      background: rgba(0,0,0,0.7);
+      display: none;
+     
+  }
+  
+  #wonGame {
+      position: absolute;
+      top: 43%;
+      left: 35%;
+      text-align: center;
+      display: none;
+      font-size: 80px;
+      font-weight: bold;
+      font-family: fantasy;
+      color: white;
+      text-shadow: 1px 1px 2px rgb(236, 240, 2), 0 0 25px blueviolet, 0 0 5px blue;
+  } 
+  
+  #cup-img {
+      margin: auto;
+      margin-top: 5%;
+      width: 200px;
+      height: 200px;
+      display: none;
+  }
+  #sound{
+   
+    width: 20px;
+    height:20px;
     cursor: pointer;
-    font-size: 55px;
-    color: red;
-    display: none;
-}
+    position: absolute;
+    top: 623px;
+    left:489px;
+    z-index: 10;
 
-#playAgain:hover {
-    background-color: yellow;
-    border: 3px solid red;
 }
+  
+  #loseGame {
+      position: absolute;
+      top: 43%;
+      left: 38%;
+      /* right: 50%; */
+      margin-top: 21%;
+      margin: auto;
+      /* margin-left: 35%; */
+      text-align: center;
+      display: none;
+      font-size: 85px;
+      font-weight: bold;
+      font-family: fantasy;
+      color: red;
+      text-shadow: 1px 1px 2px rgb(236, 240, 2), 0 0 25px rgb(255, 255, 0), 0 0 5px yellow;
+  }
+  
+  #sad-img {
+    position: absolute;
+      /* margin: auto; */
+      /* margin-top: 5%; */
+      top: 18%;
+      left: 45%;
+      width: 150px;
+      height: 150px;
+      display: none;
+      transition-duration: 1s;
+      transition-property: transform;
+      transition-timing-function: ease;
+  }
+  
+  #sad-img:hover {
+      transform: rotate(360deg); 
+  }
+  
+  #playAgain {
+      position: absolute;
+      border: 1px solid yellow;
+      border-radius: 5px;
+      padding: 5px;
+      top: 67%;
+      left: 41%;
+      font-family: fantasy;
+      cursor: pointer;
+      font-size: 55px;
+      color: red;
+      display: none;
+  }
+  
+  #playAgain:hover {
+      background-color: yellow;
+      border: 3px solid red;
+  }
+  
