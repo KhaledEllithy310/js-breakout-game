@@ -12,13 +12,6 @@ body{
     display: block;
     margin: auto;
     background-color: #eee;
-    border: 2px solid black;
-    margin-top: 50px;
-}
-
-.convasContainer{
-    margin: auto;
-    width: 650px;
 }
 
 /* #gameStatus {
