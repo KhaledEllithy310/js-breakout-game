@@ -4,14 +4,12 @@ let ctx = myCanvas.getContext("2d");
 /****************************************************************************/
 
 // VARIABLE DECLARATION
-let padd_Width = 80;
+let padd_Width = 120;
 let padd_height = 20;
 let padd_margin_bottom = 40;
 let leftArrow = false;
 let rightArrow = false;
 document.addEventListener("mousemove", mouseMoveHandler, false);
-let backG_img = new Image();
-// backG_img.src = "img/space.jpg";
 const ballRadius = 10;
 
 /****************************************************************************/
@@ -46,19 +44,20 @@ let brickContainer = [];
 
 // BRICK PROPERTIES
 let brick = {
-  rows: 5,
-  cols: 10,
+  rows: 3,
+  cols: 5,
   height: 30,
   width: function () {
-    return myCanvas.width / this.cols;
+    return (myCanvas.width - (this.cols + 1) * this.offsetLeft) / this.cols;
   },
-  offsetLeft: 0,
-  offsetTop: 0,
+  offsetLeft: 30,
+  offsetTop: 30,
   marginTop: 100,
   fillColor: "rgba(9, 10, 78)",
   strokeColor: "#FFF",
 };
-
+console.log("myCanvas.width", myCanvas.width);
+console.log("brick.width()", brick.width());
 /****************************************************************************/
 
 // PADDLE PEOPERTIES
@@ -112,6 +111,7 @@ function mouseMoveHandler(e) {
     padd.x = relativeX - padd_Width / 2;
   }
 }
+
 /****************************************************************************/
 
 //CREATE BRICKS ON CANVAS AT COORDINATES X & Y
@@ -119,35 +119,52 @@ function createBricks() {
   for (let r = 0; r < brick.rows; r++) {
     brickContainer[r] = [];
     for (let c = 0; c < brick.cols; c++) {
-      brickContainer[r][c] = {
-        x: c * (brick.width() + brick.offsetLeft) + brick.offsetLeft,
-        y:
-          r * (brick.height + brick.offsetTop) +
-          brick.offsetTop +
-          brick.marginTop,
-        status: true,
-      };
+      if (r == Math.ceil(brick.rows / 2) && c % 2 == 0) {
+        brickContainer[r][c] = {
+          x: c * (brick.width() + brick.offsetLeft) + brick.offsetLeft,
+          y:
+            r * (brick.height + brick.offsetTop) +
+            brick.offsetTop +
+            brick.marginTop,
+          // status: false,
+          breakable: false,
+        };
+      } else {
+        brickContainer[r][c] = {
+          x: c * (brick.width() + brick.offsetLeft) + brick.offsetLeft,
+          y:
+            r * (brick.height + brick.offsetTop) +
+            brick.offsetTop +
+            brick.marginTop,
+          status: true,
+          breakable: true,
+          hitsNum: 3,
+        };
+      }
     }
   }
 }
-
+createBricks();
 /****************************************************************************/
 
 //DRAW BRICKS ON CANVAS
 function drawBricks() {
-  createBricks();
   for (let r = 0; r < brick.rows; r++) {
     for (let c = 0; c < brick.cols; c++) {
-      let b = brickContainer[r][c];
-      // if the brick does not broken
-      if (b.status) {
-        ctx.beginPath();
-        ctx.fillStyle = brick.fillColor;
-        ctx.fillRect(b.x, b.y, brick.width(), brick.height);
-
-        ctx.strokeStyle = brick.strokeColor;
+      const b = brickContainer[r][c];
+      if (b.status == true && b.breakable == true) {
+        if (b.hitsNum === 2) {
+          ctx.fillStyle = "red";
+          ctx.strokeStyle = brick.strokeColor;
+        } else {
+          ctx.fillStyle = brick.fillColor;
+          ctx.strokeStyle = brick.strokeColor;
+        }
         ctx.strokeRect(b.x, b.y, brick.width(), brick.height);
-        ctx.closePath();
+        ctx.fillRect(b.x, b.y, brick.width(), brick.height);
+      } else if (b.breakable == false) {
+        ctx.fillStyle = "white";
+        ctx.fillRect(b.x, b.y, brick.width(), brick.height);
       }
     }
   }
@@ -184,7 +201,7 @@ function drawBall() {
   ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
   ctx.fillStyle = "RED";
   ctx.fill();
-  ctx.strokeStyle = "black";
+  ctx.strokeStyle = "white";
   ctx.stroke();
   ctx.closePath();
 }
@@ -192,7 +209,6 @@ function drawBall() {
 /****************************************************************************/
 
 // MOVE THE BALL
-let LIFE = 3;
 function moveBall() {
   ball.x += ball.dx;
   ball.y += ball.dy;
@@ -215,8 +231,7 @@ function ballWallCollision() {
   }
 
   if (ball.y + ballRadius > myCanvas.height) {
-    LIFE--; // LOSE LIFE
-    //LIFE_LOST.play();
+    game.lives--;
     resetBall();
   }
 }
@@ -234,13 +249,51 @@ function ballPaddleCollision() {
   ) {
     //WHRER THE BALL HIT THE PADDLE
     let collidePoint = ball.x - (padd.x + padd.width / 2);
-    //NORMALIZE THE VALUEW
+    //NORMALIZE THE VALUE
     collidePoint = collidePoint / (padd.x + padd.width);
     //CALCULATE THE ANGLE OF THE BALL THE Y DIRECTION
     let angle = collidePoint * (Math.PI * 3);
     //CALCULATE THE NEW DIRECTION OF THE BALL
     ball.dx = ball.speed * Math.sin(angle);
     ball.dy = -ball.speed * Math.cos(angle);
+  }
+}
+
+/****************************************************************************/
+
+// BALL AND BRICKS COLLISION DETECTION
+function ballBricksCollision() {
+  for (let r = 0; r < brick.rows; r++) {
+    for (let c = 0; c < brick.cols; c++) {
+      let b = brickContainer[r][c];
+      // c
+      if (b.status && b.breakable) {
+        if (
+          ball.x + ball.r > b.x &&
+          ball.x - ball.r < b.x + brick.width() &&
+          ball.y - ball.r < b.y + brick.height &&
+          ball.y + ball.r > b.y
+        ) {
+          b.hitsNum--;
+          ctx.fillRect(b.x, b.y, brick.width(), brick.height);
+          ctx.fillStyle = "red";
+          ball.dy = -ball.dy;
+          if (b.hitsNum === 1) {
+            b.status = false;
+            game.score += 10;
+          }
+        }
+      } else if (b.breakable == false) {
+        if (
+          ball.x + ball.r > b.x &&
+          ball.x - ball.r < b.x + brick.width() &&
+          ball.y + ball.r > b.y &&
+          ball.y - ball.r < b.y + brick.height
+        ) {
+          ball.dy = -ball.dy;
+        }
+      }
+    }
   }
 }
 
@@ -297,8 +350,8 @@ function paint() {
     myCanvas.width / 2 - 30,
     8
   );
-  drawBricks();
   drawLives();
+  drawBricks();
   drawingPaddle();
   drawBall();
 }
@@ -311,6 +364,7 @@ function update() {
   movingPaddle();
   ballWallCollision();
   ballPaddleCollision();
+  ballBricksCollision();
 }
 
 /****************************************************************************/

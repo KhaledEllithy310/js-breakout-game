@@ -10,11 +10,8 @@ body{
 
 #myCanvas {
     background-color: #eee;
-    margin-top: 50px;
-}
-
-.convasContainer{
     margin: auto;
-    width: 650px;
+    display: block;
+
 }
 
