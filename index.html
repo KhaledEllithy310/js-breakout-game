@@ -8,9 +8,31 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <div class="convasContainer">
-      <canvas id="myCanvas" width="600" height="650">123</canvas>
+    <div id="small">
+      <button id="first">
+        Game On
+        <p>Enjoy Our Game , Enjoy Your Time</p>
+      </button>
     </div>
+
+    <div class="sound">
+      <img src="img/SOUND_ON.png" alt="" id="sound">
+  </div>
+    <canvas id="myCanvas" width="600" height="650">
+      
+    </canvas>
+    
+    <div id="gameStatus" style="top: 0;">
+      <h2 id="wonGame">You Have Won</h2>
+      <img src="img/cup.png" id="cup-img" />
+      <h2 id="loseGame">GAME OVER</h2>
+      <img src="img/sad.png" id="sad-img" />
+      <div id="playAgain">Play Again..!</div>
+    </div>
+     <!-- <input type="submit" value="won" id="btn" class="btn" onclick="win()" /> -->
+    <!-- <input type="submit" value="lost" id="btn2" class="btn2" onclick="lost()" />  -->
+
     <script src="js/breakout.js"></script>
+    <script src="js/components.js"></script>
   </body>
 </html>
