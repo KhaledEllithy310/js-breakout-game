@@ -1,3 +1,4 @@
+//DRAW THE CANVAS ELEMENT
 let myCanvas = document.getElementById("myCanvas");
 let ctx = myCanvas.getContext("2d");
 
@@ -15,8 +16,6 @@ let avail_lives = 3;
 let GAME_OVER = false;
 //let LEVEL =1;
 //let MAX_LEVEL=3;
-
-/****************************************************************************/
 
 /****************************************************************************/
 // THE gameStatus FUNCTIONS
@@ -46,17 +45,6 @@ function youLost() {
 }
 
 /****************************************************************************/
-//WIN BTN
-function win() {
-  youWon();
-}
-// LOSE BTN
-function lost() {
-  youLost();
-}
-/****************************************************************************/
-
-/****************************************************************************/
 
 //images
 const images = {
@@ -79,13 +67,13 @@ const game = {
   lives: 3,
   score: 0,
   level: 1,
-  MAX_LEVEL:3,
+  MAX_LEVEL: 3,
 };
+
+/****************************************************************************/
 
 // CONTAINER TO STORE THE BRICKIS INSIDE IT
 let brickContainer = [];
-
-/****************************************************************************/
 
 // BRICK PROPERTIES
 let brick = {
@@ -98,11 +86,9 @@ let brick = {
   offsetLeft: 30,
   offsetTop: 30,
   marginTop: 100,
-  fillColor: "rgba(9, 10, 78)",
+  fillColor: "#D92BAC",
   strokeColor: "#FFF",
 };
-console.log("myCanvas.width", myCanvas.width);
-console.log("brick.width()", brick.width());
 /****************************************************************************/
 
 // PADDLE PEOPERTIES
@@ -118,7 +104,7 @@ const padd = {
 
 // DRAWING THE PADDLE
 function drawingPaddle() {
-  ctx.fillStyle = "blue";
+  ctx.fillStyle = "#CC456D";
   ctx.fillRect(padd.x, padd.y, padd.width, padd.height);
   ctx.strokeStyle = "white";
   ctx.strokeRect(padd.x, padd.y, padd.width, padd.height);
@@ -148,6 +134,7 @@ document.addEventListener("keyup", function (e) {
 // MOVING THE PADDLE USING MOUSE
 
 function mouseMoveHandler(e) {
+  //position mouse in the middle of the paddle
   const relativeX = e.clientX - myCanvas.offsetLeft;
   if (
     relativeX - padd_Width / 2 > 0 &&
@@ -165,16 +152,17 @@ function createBricks() {
     brickContainer[r] = [];
     for (let c = 0; c < brick.cols; c++) {
       if (r == Math.ceil(brick.rows / 2) && c % 2 == 0) {
+        // FOR UNbreakable BRICK
         brickContainer[r][c] = {
           x: c * (brick.width() + brick.offsetLeft) + brick.offsetLeft,
           y:
             r * (brick.height + brick.offsetTop) +
             brick.offsetTop +
             brick.marginTop,
-          // status: false,
           breakable: false,
         };
       } else {
+        // FOR breakable BRICK
         brickContainer[r][c] = {
           x: c * (brick.width() + brick.offsetLeft) + brick.offsetLeft,
           y:
@@ -197,11 +185,11 @@ function drawBricks() {
   for (let r = 0; r < brick.rows; r++) {
     for (let c = 0; c < brick.cols; c++) {
       const b = brickContainer[r][c];
-      if (b.status == true && b.breakable == true) {
+      if (b.status && b.breakable) {
         if (b.hitsNum === 2) {
-          ctx.fillStyle = "red";
+          ctx.fillStyle = "#9F24FF";
           ctx.strokeStyle = brick.strokeColor;
-        } else {
+        } else if (b.hitsNum === 3) {
           ctx.fillStyle = brick.fillColor;
           ctx.strokeStyle = brick.strokeColor;
         }
@@ -244,7 +232,7 @@ const ball = {
 function drawBall() {
   ctx.beginPath();
   ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
-  ctx.fillStyle = "RED";
+  ctx.fillStyle = "#FFCD05";
   ctx.fill();
   ctx.strokeStyle = "white";
   ctx.stroke();
@@ -293,14 +281,13 @@ function ballPaddleCollision() {
     ball.x > padd.x &&
     ball.x < padd.x + padd.width
   ) {
-
-   PADDLE_HIT.play(); //sound
+    PADDLE_HIT.play(); //sound
 
     //WHRER THE BALL HIT THE PADDLE
     let collidePoint = ball.x - (padd.x + padd.width / 2);
     //NORMALIZE THE VALUE
     collidePoint = collidePoint / (padd.width / 2);
-    //CALCULATE THE ANGLE OF THE BALL THE Y DIRECTION
+    //CALCULATE THE ANGLE OF THE BALL with THE Y DIRECTION
     let angle = (collidePoint * Math.PI) / 3;
     //CALCULATE THE NEW DIRECTION OF THE BALL
     ball.dx = ball.speed * Math.sin(angle);
@@ -323,12 +310,12 @@ function ballBricksCollision() {
           ball.y - ball.r < b.y + brick.height &&
           ball.y + ball.r > b.y
         ) {
-             BRICK_HIT.play();//sound
+          BRICK_HIT.play(); //sound
           b.hitsNum--;
+          ctx.fillStyle = "#9F24FF";
           ctx.fillRect(b.x, b.y, brick.width(), brick.height);
-          ctx.fillStyle = "red";
           ball.dy = -ball.dy;
-          if (b.hitsNum === 1) {
+          if (b.hitsNum == 1) {
             b.status = false;
             game.score += 10;
           }
@@ -349,30 +336,29 @@ function ballBricksCollision() {
 
 /****************************************************************************/
 
-// //level up 
-function levelUp(){
-  let isLevelDone =true
- for (let r = 0; r < brick.rows; r++) {
-   for (let c = 0; c < brick.cols; c++) {
-         isLevelDone =isLevelDone && ! brickContainer[r][c].status
-                  }
-          }
-          if(isLevelDone){
-              WIN.play();//sound
-              if(game.level >= game.MAX_LEVEL){
-                  youWon();
-                 
-                  GAME_OVER=true;
-                  return;
-              }
-              brick.rows++;
-              createBricks();
-              ball.speed+=0.5;
-              resetBall();
-              game.level++;
-              COMPLETE_LEVEL.play();//sound
-          }
-      }
+// //level up
+function levelUp() {
+  let isLevelDone = true;
+  for (let r = 0; r < brick.rows; r++) {
+    for (let c = 0; c < brick.cols; c++) {
+      isLevelDone = isLevelDone && !brickContainer[r][c].status;
+    }
+  }
+  if (isLevelDone) {
+    WIN.play(); //sound
+    if (game.level >= game.MAX_LEVEL) {
+      youWon();
+      GAME_OVER = true;
+      return;
+    }
+    brick.rows++;
+    createBricks();
+    ball.speed += 0.5;
+    resetBall();
+    game.level++;
+    COMPLETE_LEVEL.play(); //sound
+  }
+}
 /****************************************************************************/
 
 // RESET THE BALL
@@ -389,6 +375,7 @@ function showGameStats(text, textX, textY, img, imgX, imgY) {
   ctx.fillStyle = "#FFF";
   ctx.font = "25px Germania One";
   ctx.fillText(text, textX, textY);
+  // draw IMAGE
   ctx.drawImage(img, imgX, imgY, 25, 25);
 }
 
@@ -413,6 +400,8 @@ function drawLives() {
 let small = document.getElementById("small");
 document.getElementById("first").addEventListener("click", function clicking() {
   small.style = "display:none";
+  //BG_SOUND.play(); // sound
+  animation();
 });
 
 /****************************************************************************/
@@ -421,8 +410,6 @@ document.getElementById("first").addEventListener("click", function clicking() {
 function paint() {
   //CLEAR PREVIOUS FRAME
   ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-  // DRAW BACKGROUND
-  // ctx.drawImage(images.background, 0, 0, myCanvas.width, myCanvas.height);
   // DRAW SCORE
   showGameStats(game.score, 35, 30, images.score, 5, 9);
   // DRAW LEVELS
@@ -434,6 +421,7 @@ function paint() {
     myCanvas.width / 2 - 30,
     8
   );
+
   drawLives();
   drawBricks();
   drawingPaddle();
@@ -449,7 +437,7 @@ function gameOver() {
   if (game.lives <= 0) {
     youLost();
     GAME_OVER = true;
-    GAME_OVER_sound.play();//sound
+    GAME_OVER_sound.play(); //sound
   }
 }
 /****************************************************************************/
@@ -466,7 +454,7 @@ function update() {
 }
 
 /****************************************************************************/
-
+//let  music= true ;
 // THE GAME LOOP FUNCTIONS
 function animation() {
   paint();
@@ -476,32 +464,26 @@ function animation() {
     requestAnimationFrame(animation);
   }
 }
-animation();
-
-
 
 //select sound
 const soundElement = document.getElementById("sound");
 
 soundElement.addEventListener("click", audioManager);
 
-function audioManager(){
-    // CHANGE IMAGE SOUND_ON/OFF
-    let imgSrc = soundElement.getAttribute("src");
-    let SOUND_IMG = imgSrc == "img/SOUND_ON.png" ? "img/SOUND_OFF.png" : "img/SOUND_ON.png";
-    
-    soundElement.setAttribute("src", SOUND_IMG);
-    
-    // MUTE AND UNMUTE SOUNDS
-    WALL_HIT.muted = WALL_HIT.muted ? false : true;
-    PADDLE_HIT.muted = PADDLE_HIT.muted ? false : true;
-    BRICK_HIT.muted = BRICK_HIT.muted ? false : true;
-    WIN.muted = WIN.muted ? false : true;
-    LIFE_LOST.muted = LIFE_LOST.muted ? false : true;
-    GAME_OVER_sound.muted = GAME_OVER_sound.muted ? false : true;
-    COMPLETE_LEVEL.muted =  COMPLETE_LEVEL.muted ? false : true;
+function audioManager() {
+  // CHANGE IMAGE SOUND_ON/OFF
+  let imgSrc = soundElement.getAttribute("src");
+  let SOUND_IMG =
+    imgSrc == "img/SOUND_ON.png" ? "img/SOUND_OFF.png" : "img/SOUND_ON.png";
 
-   
+  soundElement.setAttribute("src", SOUND_IMG);
 
-    
+  // MUTE AND UNMUTE SOUNDS
+  WALL_HIT.muted = WALL_HIT.muted ? false : true;
+  PADDLE_HIT.muted = PADDLE_HIT.muted ? false : true;
+  BRICK_HIT.muted = BRICK_HIT.muted ? false : true;
+  WIN.muted = WIN.muted ? false : true;
+  LIFE_LOST.muted = LIFE_LOST.muted ? false : true;
+  GAME_OVER_sound.muted = GAME_OVER_sound.muted ? false : true;
+  COMPLETE_LEVEL.muted = COMPLETE_LEVEL.muted ? false : true;
 }
