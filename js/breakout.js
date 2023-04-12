@@ -57,6 +57,7 @@ const images = {
 
 // IMAGES OF COMPONENTS
 images.background.src = "./img/1876.jpg";
+0;
 images.score.src = "./img/score.png";
 images.lives.src = "./img/life.png";
 images.level.src = "./img/level.png";
@@ -77,7 +78,7 @@ let brickContainer = [];
 
 // BRICK PROPERTIES
 let brick = {
-  rows: 1,
+  rows: 2,
   cols: 5,
   height: 30,
   width: function () {
@@ -146,12 +147,23 @@ function mouseMoveHandler(e) {
 
 /****************************************************************************/
 
+// MOVING THE PADDLE RIGHT & LEFT
+function movingPaddle() {
+  if (rightArrow && padd.x + padd.width < myCanvas.width) {
+    padd.x += padd.dx;
+  } else if (leftArrow && padd.x > 0) {
+    padd.x -= padd.dx;
+  }
+}
+
+/****************************************************************************/
+
 //CREATE BRICKS ON CANVAS AT COORDINATES X & Y
 function createBricks() {
   for (let r = 0; r < brick.rows; r++) {
     brickContainer[r] = [];
     for (let c = 0; c < brick.cols; c++) {
-      if (r == Math.ceil(brick.rows / 2) && c % 2 == 0) {
+      if (r % 3 == 0 && c % 2 == 0) {
         // FOR UNbreakable BRICK
         brickContainer[r][c] = {
           x: c * (brick.width() + brick.offsetLeft) + brick.offsetLeft,
@@ -200,17 +212,6 @@ function drawBricks() {
         ctx.fillRect(b.x, b.y, brick.width(), brick.height);
       }
     }
-  }
-}
-
-/****************************************************************************/
-
-// MOVING THE PADDLE RIGHT & LEFT
-function movingPaddle() {
-  if (rightArrow && padd.x + padd.width < myCanvas.width) {
-    padd.x += padd.dx;
-  } else if (leftArrow && padd.x > 0) {
-    padd.x -= padd.dx;
   }
 }
 
@@ -327,6 +328,7 @@ function ballBricksCollision() {
           ball.y + ball.r > b.y &&
           ball.y - ball.r < b.y + brick.height
         ) {
+          WALL_HIT.play();
           ball.dy = -ball.dy;
         }
       }
