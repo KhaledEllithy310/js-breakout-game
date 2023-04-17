@@ -10,12 +10,17 @@ let padd_height = 20;
 let padd_margin_bottom = 40;
 let leftArrow = false;
 let rightArrow = false;
-document.addEventListener("mousemove", mouseMoveHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler);
 const ballRadius = 10;
 let avail_lives = 3;
 let GAME_OVER = false;
-//let LEVEL =1;
-//let MAX_LEVEL=3;
+let startScreen = document.getElementById("startScreen");
+let learnScreen = document.getElementById("learnScreen");
+let playBtn = document.getElementById("play");
+let learnBtn = document.getElementById("learn");
+let backToHome = document.getElementById("backToHome");
+let exitBtn = document.getElementById("exitBtn");
+let comeOn = document.getElementById("comeOn");
 
 /****************************************************************************/
 // THE gameStatus FUNCTIONS
@@ -412,32 +417,11 @@ function mouseClickHandler(e) {
   }
 }
 
-function drawPause() {
-  // pause animation
-  // ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-  // ctx.font = "30px Arial";
-  // ctx.fillStyle = "#0095DD";
-  // ctx.fillText("Paused", 200, 150);
-  // ctx.fillText("Score: " + game.score, 8, 20);
-  // ctx.fillText("Lives: " + game.lives, myCanvas.width / 2 - 35, 20);
-  // ctx.fillText("Click to unpause", 170, 250);
-  // pause.innerHTML = '<i class="bi bi-play-circle-fill"></i>';
-  // console.log(gameState);
-  // console.log(pause);
-}
+function drawPause() {}
 
 /****************************************************************************/
 
 // HOME PAGE
-let startScreen = document.getElementById("startScreen");
-let learnScreen = document.getElementById("learnScreen");
-
-let playBtn = document.getElementById("play");
-let learnBtn = document.getElementById("learn");
-let backToHome = document.getElementById("backToHome");
-let exitBtn = document.getElementById("exitBtn");
-let comeOn = document.getElementById("comeOn");
-
 //PLAT GAME
 playBtn.addEventListener("click", function clicking() {
   startScreen.style = "display:none";
@@ -509,7 +493,7 @@ function gameOver() {
 // THE UPDATE FUNCTIONS
 function update() {
   gameOver();
-  // moveBall();
+  moveBall();
   movingPaddle();
   ballWallCollision();
   ballPaddleCollision();

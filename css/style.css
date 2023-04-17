@@ -287,3 +287,58 @@ body::after {
   background-color: yellow;
   border: 3px solid red;
 }
+  
+  #loseGame {
+      position: absolute;
+      top: 43%;
+      left: 38%;
+      /* right: 50%; */
+      margin-top: 21%;
+      margin: auto;
+      /* margin-left: 35%; */
+      text-align: center;
+      display: none;
+      font-size: 85px;
+      font-weight: bold;
+      font-family: fantasy;
+      color: red;
+      text-shadow: 1px 1px 2px rgb(236, 240, 2), 0 0 25px rgb(255, 255, 0), 0 0 5px yellow;
+  }
+  
+  #sad-img {
+    position: absolute;
+      /* margin: auto; */
+      /* margin-top: 5%; */
+      top: 18%;
+      left: 45%;
+      width: 150px;
+      height: 150px;
+      display: none;
+      transition-duration: 1s;
+      transition-property: transform;
+      transition-timing-function: ease;
+  }
+  
+  #sad-img:hover {
+      transform: rotate(360deg); 
+  }
+  
+  #playAgain {
+      position: absolute;
+      border: 1px solid yellow;
+      border-radius: 5px;
+      padding: 5px;
+      top: 67%;
+      left: 41%;
+      font-family: fantasy;
+      cursor: pointer;
+      font-size: 55px;
+      color: red;
+      display: none;
+  }
+  
+  #playAgain:hover {
+      background-color: yellow;
+      border: 3px solid red;
+  }
+  
