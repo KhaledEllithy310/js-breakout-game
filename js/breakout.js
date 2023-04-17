@@ -14,8 +14,13 @@ document.addEventListener("mousemove", mouseMoveHandler);
 const ballRadius = 10;
 let avail_lives = 3;
 let GAME_OVER = false;
-//let LEVEL =1;
-//let MAX_LEVEL=3;
+let startScreen = document.getElementById("startScreen");
+let learnScreen = document.getElementById("learnScreen");
+let playBtn = document.getElementById("play");
+let learnBtn = document.getElementById("learn");
+let backToHome = document.getElementById("backToHome");
+let exitBtn = document.getElementById("exitBtn");
+let comeOn = document.getElementById("comeOn");
 
 /****************************************************************************/
 // THE gameStatus FUNCTIONS
@@ -57,7 +62,6 @@ const images = {
 
 // IMAGES OF COMPONENTS
 images.background.src = "./img/1876.jpg";
-0;
 images.score.src = "./img/score.png";
 images.lives.src = "./img/life.png";
 images.level.src = "./img/level.png";
@@ -163,7 +167,7 @@ function createBricks() {
   for (let r = 0; r < brick.rows; r++) {
     brickContainer[r] = [];
     for (let c = 0; c < brick.cols; c++) {
-      if (r % 2 == 0 && c % 2 == 0) {
+      if (r % 3 == 0 && c % 2 == 0) {
         // FOR UNbreakable BRICK
         brickContainer[r][c] = {
           x: c * (brick.width() + brick.offsetLeft) + brick.offsetLeft,
@@ -222,7 +226,7 @@ const ball = {
   x: myCanvas.width / 2,
   y: padd.y - ballRadius,
   r: 10, //BALL RADIUS
-  speed: 7,
+  speed: 4,
   dx: 3 * (Math.random() * 2 - 1),
   dy: -3,
 };
@@ -397,15 +401,59 @@ function drawLives() {
 }
 
 /****************************************************************************/
+let pause = document.getElementById("pauseBtn");
+pause.addEventListener("click", mouseClickHandler, false); // Added as a way to restart the game upon loss or win
+var gameState;
+function mouseClickHandler(e) {
+  if (gameState == "playing") {
+    gameState = "pause";
+    pause.innerHTML = '<i class="bi bi-play-circle-fill"></i>';
+    console.log(pause);
+  } else if (gameState == "pause") {
+    gameState = "playing";
+    pause.innerHTML = '<i class="bi bi-pause-circle-fill"></i>';
+    console.log(pause);
+    animation();
+  }
+}
+
+function drawPause() {}
+
+/****************************************************************************/
 
 // HOME PAGE
-let small = document.getElementById("small");
-document.getElementById("first").addEventListener("click", function clicking() {
-  small.style = "display:none";
-  //BG_SOUND.play(); // sound
+//PLAT GAME
+playBtn.addEventListener("click", function clicking() {
+  startScreen.style = "display:none";
+  myCanvas.style = "display:block";
+  gameState = "playing";
   animation();
 });
 
+// LEARN
+learnBtn.addEventListener("click", function clicking() {
+  startScreen.style = "display:none";
+  myCanvas.style = "display:none";
+  learnScreen.style = "display:block";
+});
+
+// BACK TO HOME FROM LEARN SCREEN
+backToHome.addEventListener("click", function clicking() {
+  location.reload();
+});
+
+// BACK TO HOME FROM PLAY GAME
+exitBtn.addEventListener("click", function clicking() {
+  location.reload();
+});
+
+// GO TO PLAY FROM LEARN SCREEN
+comeOn.addEventListener("click", function () {
+  learnScreen.style = "display:none";
+  myCanvas.style = "display:block";
+  gameState = "playing";
+  animation();
+});
 /****************************************************************************/
 
 // PAINT SHAPES ON CANVAS
@@ -429,8 +477,6 @@ function paint() {
   drawingPaddle();
   drawBall();
 }
-
-/****************************************************************************/
 
 /****************************************************************************/
 // GAME OVER FUNCTION
@@ -459,12 +505,18 @@ function update() {
 //let  music= true ;
 // THE GAME LOOP FUNCTIONS
 function animation() {
-  paint();
-  update();
-
-  if (!GAME_OVER) {
-    requestAnimationFrame(animation);
+  if (gameState == "playing") {
+    paint();
+    update();
+    if (!GAME_OVER) {
+      requestAnimationFrame(animation);
+    }
+  } else if (gameState == "pause") {
+    drawPause();
   }
+}
+if (gameState == "playing") {
+  animation();
 }
 
 //select sound
