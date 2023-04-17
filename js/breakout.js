@@ -57,7 +57,6 @@ const images = {
 
 // IMAGES OF COMPONENTS
 images.background.src = "./img/1876.jpg";
-0;
 images.score.src = "./img/score.png";
 images.lives.src = "./img/life.png";
 images.level.src = "./img/level.png";
@@ -222,7 +221,7 @@ const ball = {
   x: myCanvas.width / 2,
   y: padd.y - ballRadius,
   r: 10, //BALL RADIUS
-  speed: 7,
+  speed: 4,
   dx: 3 * (Math.random() * 2 - 1),
   dy: -3,
 };
@@ -397,15 +396,80 @@ function drawLives() {
 }
 
 /****************************************************************************/
+let pause = document.getElementById("pauseBtn");
+pause.addEventListener("click", mouseClickHandler, false); // Added as a way to restart the game upon loss or win
+var gameState;
+function mouseClickHandler(e) {
+  if (gameState == "playing") {
+    gameState = "pause";
+    pause.innerHTML = '<i class="bi bi-play-circle-fill"></i>';
+    console.log(pause);
+  } else if (gameState == "pause") {
+    gameState = "playing";
+    pause.innerHTML = '<i class="bi bi-pause-circle-fill"></i>';
+    console.log(pause);
+    animation();
+  }
+}
+
+function drawPause() {
+  // pause animation
+  // ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+  // ctx.font = "30px Arial";
+  // ctx.fillStyle = "#0095DD";
+  // ctx.fillText("Paused", 200, 150);
+  // ctx.fillText("Score: " + game.score, 8, 20);
+  // ctx.fillText("Lives: " + game.lives, myCanvas.width / 2 - 35, 20);
+  // ctx.fillText("Click to unpause", 170, 250);
+  // pause.innerHTML = '<i class="bi bi-play-circle-fill"></i>';
+  // console.log(gameState);
+  // console.log(pause);
+}
+
+/****************************************************************************/
 
 // HOME PAGE
-let small = document.getElementById("small");
-document.getElementById("first").addEventListener("click", function clicking() {
-  small.style = "display:none";
-  //BG_SOUND.play(); // sound
+let startScreen = document.getElementById("startScreen");
+let learnScreen = document.getElementById("learnScreen");
+
+let playBtn = document.getElementById("play");
+let learnBtn = document.getElementById("learn");
+let backToHome = document.getElementById("backToHome");
+let exitBtn = document.getElementById("exitBtn");
+let comeOn = document.getElementById("comeOn");
+
+//PLAT GAME
+playBtn.addEventListener("click", function clicking() {
+  startScreen.style = "display:none";
+  myCanvas.style = "display:block";
+  gameState = "playing";
   animation();
 });
 
+// LEARN
+learnBtn.addEventListener("click", function clicking() {
+  startScreen.style = "display:none";
+  myCanvas.style = "display:none";
+  learnScreen.style = "display:block";
+});
+
+// BACK TO HOME FROM LEARN SCREEN
+backToHome.addEventListener("click", function clicking() {
+  location.reload();
+});
+
+// BACK TO HOME FROM PLAY GAME
+exitBtn.addEventListener("click", function clicking() {
+  location.reload();
+});
+
+// GO TO PLAY FROM LEARN SCREEN
+comeOn.addEventListener("click", function () {
+  learnScreen.style = "display:none";
+  myCanvas.style = "display:block";
+  gameState = "playing";
+  animation();
+});
 /****************************************************************************/
 
 // PAINT SHAPES ON CANVAS
@@ -431,8 +495,6 @@ function paint() {
 }
 
 /****************************************************************************/
-
-/****************************************************************************/
 // GAME OVER FUNCTION
 
 function gameOver() {
@@ -447,7 +509,7 @@ function gameOver() {
 // THE UPDATE FUNCTIONS
 function update() {
   gameOver();
-  moveBall();
+  // moveBall();
   movingPaddle();
   ballWallCollision();
   ballPaddleCollision();
@@ -459,12 +521,18 @@ function update() {
 //let  music= true ;
 // THE GAME LOOP FUNCTIONS
 function animation() {
-  paint();
-  update();
-
-  if (!GAME_OVER) {
-    requestAnimationFrame(animation);
+  if (gameState == "playing") {
+    paint();
+    update();
+    if (!GAME_OVER) {
+      requestAnimationFrame(animation);
+    }
+  } else if (gameState == "pause") {
+    drawPause();
   }
+}
+if (gameState == "playing") {
+  animation();
 }
 
 //select sound
